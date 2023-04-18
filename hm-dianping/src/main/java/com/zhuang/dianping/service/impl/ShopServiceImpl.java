@@ -23,8 +23,8 @@ import static com.zhuang.dianping.utils.RedisConstants.*;
  * 服务实现类
  * </p>
  *
- * @author 虎哥
- * @since 2021-12-22
+ * @author 康小庄
+ * @since 2023-4-18
  */
 @Service
 public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IShopService {
