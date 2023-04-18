@@ -20,7 +20,7 @@ class RedisDemoApplicationTests {
     @Test
     void testString() {
         // 写入一条String数据
-        redisTemplate.opsForValue().set("name", "虎哥");
+        redisTemplate.opsForValue().set("name", "康小庄");
         // 获取string数据
         Object name = redisTemplate.opsForValue().get("name");
         System.out.println("name = " + name);
