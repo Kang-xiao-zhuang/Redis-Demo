@@ -1,7 +1,7 @@
 package com.zhuang.dianping.utils;
 
 /**
- * @author 虎哥
+ * @author 康小庄
  */
 public abstract class RegexPatterns {
     /**
