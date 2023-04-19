@@ -221,6 +221,12 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         return Result.ok();
     }
 
+    /**
+     * 缓存预热
+     *
+     * @param id            Long
+     * @param expireSeconds Long
+     */
     public void saveShop2Redis(Long id, Long expireSeconds) throws InterruptedException {
         // 查询店铺数据
         Shop shop = getById(id);
