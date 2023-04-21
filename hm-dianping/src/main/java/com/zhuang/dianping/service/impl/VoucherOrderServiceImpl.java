@@ -10,10 +10,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhuang.dianping.utils.RedisIdWorker;
 import com.zhuang.dianping.utils.SimpleRedisLock;
 import com.zhuang.dianping.utils.UserHolder;
+import org.redisson.api.RLock;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.redisson.api.RedissonClient;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -38,6 +40,8 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private RedissonClient redissonClient;
 
     @Override
     public Result seckillVoucher(Long voucherId) {
@@ -104,9 +108,11 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
         Long userId = UserHolder.getUser().getId();
         //创建锁对象(新增代码)
-        SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
+        //SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
+        RLock lock = redissonClient.getLock("lock:order:" + userId);
         //获取锁对象
-        boolean isLock = lock.tryLock(1200);
+        // boolean isLock = lock.tryLock(1200);
+        boolean isLock = lock.tryLock();
         //加锁失败
         if (!isLock) {
             return Result.fail("不允许重复下单");
