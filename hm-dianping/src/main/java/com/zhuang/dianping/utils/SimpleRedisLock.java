@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import cn.hutool.core.lang.UUID;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,6 +50,15 @@ public class SimpleRedisLock implements ILock {
 
     @Override
     public void unlock() {
+        // 调用lua脚本
+        stringRedisTemplate.execute(
+                UNLOCK_SCRIPT,
+                Collections.singletonList(KEY_PREFIX + name),
+                ID_PREFIX + Thread.currentThread().getId());
+    }
+
+    /*    @Override
+    public void unlock() {
         // 获取线程标示
         String threadId = ID_PREFIX + Thread.currentThread().getId();
         // 获取锁中的标示
@@ -58,5 +68,5 @@ public class SimpleRedisLock implements ILock {
             // 释放锁
             stringRedisTemplate.delete(KEY_PREFIX + name);
         }
-    }
+    }*/
 }
