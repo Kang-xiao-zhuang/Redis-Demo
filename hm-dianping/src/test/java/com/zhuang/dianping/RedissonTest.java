@@ -17,11 +17,23 @@ class RedissonTest {
     @Resource
     private RedissonClient redissonClient;
 
+    @Resource
+    private RedissonClient redissonClient2;
+
+    @Resource
+    private RedissonClient redissonClient3;
+
+
     private RLock lock;
 
     @BeforeEach
     void setUp() {
-        lock = redissonClient.getLock("order");
+        RLock lock1 = redissonClient.getLock("order");
+        RLock lock2 = redissonClient2.getLock("order");
+        RLock lock3 = redissonClient3.getLock("order");
+
+        // 创建联锁
+        lock = redissonClient.getMultiLock(lock1, lock2, lock3);
     }
 
     @Test
