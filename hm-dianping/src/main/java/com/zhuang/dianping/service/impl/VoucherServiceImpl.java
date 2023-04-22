@@ -55,6 +55,8 @@ public class VoucherServiceImpl extends ServiceImpl<VoucherMapper, Voucher> impl
         seckillVoucher.setEndTime(voucher.getEndTime());
         seckillVoucherService.save(seckillVoucher);
         // 保存秒杀库存到Redis中
+        //SECKILL_STOCK_KEY 这个变量定义在RedisConstans中
+        //private static final String SECKILL_STOCK_KEY ="seckill:stock:"
         stringRedisTemplate.opsForValue().set(SECKILL_STOCK_KEY + voucher.getId(), voucher.getStock().toString());
     }
 }
