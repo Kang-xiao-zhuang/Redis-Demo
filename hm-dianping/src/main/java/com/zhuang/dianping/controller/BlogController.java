@@ -29,8 +29,7 @@ public class BlogController {
 
     @Resource
     private IBlogService blogService;
-    @Resource
-    private IUserService userService;
+
 
     @PostMapping
     public Result saveBlog(@RequestBody Blog blog) {
@@ -48,7 +47,7 @@ public class BlogController {
         // 修改点赞数量
         blogService.update()
                 .setSql("liked = liked + 1").eq("id", id).update();
-        return Result.ok();
+        return blogService.likeBlog(id);
     }
 
     @GetMapping("/of/me")
@@ -65,19 +64,35 @@ public class BlogController {
 
     @GetMapping("/hot")
     public Result queryHotBlog(@RequestParam(value = "current", defaultValue = "1") Integer current) {
+        return blogService.queryHotBlog(current);
+    }
+
+    @GetMapping("/{id}")
+    public Result queryBolgById(@PathVariable("id") Long id) {
+        return blogService.queryBlogById(id);
+    }
+
+    @GetMapping("/likes/{id}")
+    public Result queryBlogLikes(@PathVariable("id") Long id) {
+        return blogService.queryBlogLikes(id);
+    }
+
+    @GetMapping("/of/user")
+    public Result queryBlogByUserId(
+            @RequestParam(value = "current", defaultValue = "1") Integer current,
+            @RequestParam("id") Long id) {
         // 根据用户查询
         Page<Blog> page = blogService.query()
-                .orderByDesc("liked")
-                .page(new Page<>(current, SystemConstants.MAX_PAGE_SIZE));
+                .eq("user_id", id).page(new Page<>(current, SystemConstants.MAX_PAGE_SIZE));
         // 获取当前页数据
         List<Blog> records = page.getRecords();
-        // 查询用户
-        records.forEach(blog ->{
-            Long userId = blog.getUserId();
-            User user = userService.getById(userId);
-            blog.setName(user.getNickName());
-            blog.setIcon(user.getIcon());
-        });
         return Result.ok(records);
     }
+
+    @GetMapping("/of/follow")
+    public Result queryBlogOfFollow(
+            @RequestParam("lastId") Long max, @RequestParam(value = "offset", defaultValue = "0") Integer offset) {
+        return blogService.queryBlogOfFollow(max, offset);
+    }
+
 }
