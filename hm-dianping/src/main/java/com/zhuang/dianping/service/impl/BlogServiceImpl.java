@@ -142,7 +142,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         return Result.ok(userDTOS);
     }
 
-    @Override
+    // 保存博客
     public Result saveBlog(Blog blog) {
         // 1.获取登录用户
         UserDTO user = UserHolder.getUser();
@@ -168,6 +168,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
     @Override
     public Result queryBlogOfFollow(Long max, Integer offset) {
+        //TODO 有bug没解决
         // 1.获取当前用户
         Long userId = UserHolder.getUser().getId();
         // 2.查询收件箱 ZREVRANGEBYSCORE key Max Min LIMIT offset count
@@ -194,7 +195,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
                 os = 1;
             }
         }
-
+        os = minTime == max ? os : os + offset;
         // 5.根据id查询blog
         String idStr = StrUtil.join(",", ids);
         List<Blog> blogs = query().in("id", ids).last("ORDER BY FIELD(id," + idStr + ")").list();

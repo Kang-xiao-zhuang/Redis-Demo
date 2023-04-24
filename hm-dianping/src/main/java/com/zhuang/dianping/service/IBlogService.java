@@ -13,6 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-4-18
  */
 public interface IBlogService extends IService<Blog> {
+
+    Result saveBlog(Blog blog);
+
     Result queryBlogById(Long id);
 
     Result queryHotBlog(Integer current);
@@ -20,8 +23,6 @@ public interface IBlogService extends IService<Blog> {
     Result likeBlog(Long id);
 
     Result queryBlogLikes(Long id);
-
-    Result saveBlog(Blog blog);
 
     Result queryBlogOfFollow(Long max, Integer offset);
 }
