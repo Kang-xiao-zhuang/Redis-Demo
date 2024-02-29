@@ -1,5 +1,6 @@
 package com.zhuang.redis;
 
+import com.zhuang.redis.message.AnnouncementMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,5 +25,15 @@ class RedisDemoApplicationTests {
         // 获取string数据
         Object name = redisTemplate.opsForValue().get("name");
         System.out.println("name = " + name);
+    }
+
+    @Test
+    public void testSubscribe() {
+        String achannel = "topica";
+        String bchannel = "topicb";
+
+        redisTemplate.convertAndSend(achannel, "hello world1");
+
+        redisTemplate.convertAndSend(bchannel, new AnnouncementMessage("1", "模拟发通告"));
     }
 }

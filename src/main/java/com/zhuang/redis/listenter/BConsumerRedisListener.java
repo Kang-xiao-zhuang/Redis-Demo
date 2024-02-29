@@ -7,10 +7,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Redis中发布的消息的侦听器A
+ * Redis中发布的消息的侦听器B
  */
 @Component
-public class AConsumerRedisListener implements MessageListener {
+public class BConsumerRedisListener implements MessageListener {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -33,7 +33,6 @@ public class AConsumerRedisListener implements MessageListener {
      */
     public void doBusiness(Message message) {
         Object value = redisTemplate.getValueSerializer().deserialize(message.getBody());
-        System.out.println("A==>consumer message: " + value);
+        System.out.println("B==>consumer message: " + value);
     }
-
 }
