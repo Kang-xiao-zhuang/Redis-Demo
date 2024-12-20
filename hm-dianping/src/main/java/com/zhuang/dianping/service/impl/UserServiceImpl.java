@@ -68,17 +68,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Result login(LoginFormDTO loginForm, HttpSession session) {
-        /*String phone = loginForm.getPhone();
+        String phone = loginForm.getPhone();
         // 校验手机号
         if (RegexUtils.isPhoneInvalid(phone)) {
             // 如果不符合，返回错误信息
             return Result.fail("手机号格式错误！");
         }
         // 校验验证码
-        // 从redis获取验证码并校验
+        // 改为用redis验证
         Object cacheCode = session.getAttribute("code");
+        // 从redis获取验证码并校验
         String code = loginForm.getCode();
-        if (cacheCode == null || !cacheCode.toString().equals(code)) {
+        if (code == null || !code.toString().equals(code)) {
             return Result.fail("验证码错误！");
         }
         // 一致 根据手机号查询用户
@@ -90,8 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         // 保存用户信息到session
         session.setAttribute("user", BeanUtil.copyProperties(user, UserDTO.class));
-        return Result.ok();*/
-        // 1.校验手机号
+        return Result.ok();
+        /*// 1.校验手机号
         String phone = loginForm.getPhone();
         if (RegexUtils.isPhoneInvalid(phone)) {
             // 2.如果不符合，返回错误信息
@@ -130,7 +131,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         stringRedisTemplate.expire(tokenKey, LOGIN_USER_TTL, TimeUnit.MINUTES);
 
         // 8.返回token
-        return Result.ok(token);
+        return Result.ok(token);*/
     }
 
     @Override
@@ -176,15 +177,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         // 6.循环遍历
         int count = 0;
-        while (true) {
+        // 如果为0，说明未签到，结束
+        // 如果不为0，说明已签到，计数器+1
+        while ((num & 1) != 0) {
             // 6.1.让这个数字与1做与运算，得到数字的最后一个bit位  // 判断这个bit位是否为0
-            if ((num & 1) == 0) {
-                // 如果为0，说明未签到，结束
-                break;
-            } else {
-                // 如果不为0，说明已签到，计数器+1
-                count++;
-            }
+            count++;
             // 把数字右移一位，抛弃最后一个bit位，继续下一个bit位
             num >>>= 1;
         }

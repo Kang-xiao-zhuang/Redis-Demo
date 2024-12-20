@@ -1,14 +1,18 @@
 package com.zhuang.dianping.utils;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
+
+import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.increment;
 
 /**
- * description: RedisIdWorker
+ * description: RedisIdWorker Redis实现全局唯一Id
  * date: 2023/4/19 8:23
  * author: Zhuang
  * version: 1.0
@@ -24,7 +28,7 @@ public class RedisIdWorker {
      */
     private static final int COUNT_BITS = 32;
 
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
     public RedisIdWorker(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -40,7 +44,8 @@ public class RedisIdWorker {
         // 2.1.获取当前日期，精确到天
         String date = now.format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
         // 2.2.自增长
-        long count = stringRedisTemplate.opsForValue().increment("icr:" + keyPrefix + ":" + date);
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        long count = ops.increment("icr:" + keyPrefix + ":" + date);
 
         // 3.拼接并返回
         return timestamp << COUNT_BITS | count;
